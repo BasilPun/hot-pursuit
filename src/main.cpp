@@ -175,8 +175,8 @@ int main()
     bn::fixed y_start = 22;
     Player player = Player(x_start, y_start);
 
-    bn::fixed x_start_enemy = -30;
-    bn::fixed y_start_enemy = 22;
+    bn::fixed x_start_enemy = -40;
+    bn::fixed y_start_enemy = 40;
     Enemy enemy = Enemy(x_start_enemy, y_start_enemy, ENEMY_SIZE);
 
     while (true)
