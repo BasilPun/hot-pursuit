@@ -139,6 +139,21 @@ private:
     //
 };
 
+class Enemy
+{
+public:
+    bn::sprite_ptr sprite;
+    bn::size size;
+    bn::rect bounding_box = create_bounding_box(sprite, size);
+
+    Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::square.create_sprite(x_start_enemy, y_start_enemy)),
+                                                                             size(size)
+    {
+    }
+
+private:
+};
+
 int main()
 {
     bn::core::init();
@@ -152,8 +167,9 @@ int main()
     bn::fixed y_start = 22;
     Player player = Player(x_start, y_start);
 
-    bn::sprite_ptr enemy_sprite = bn::sprite_items::square.create_sprite(-30, 22);
-    bn::rect enemy_bounding_box = create_bounding_box(enemy_sprite, ENEMY_SIZE);
+    bn::fixed x_start_enemy = -30;
+    bn::fixed y_start_enemy = 22;
+    Enemy enemy = Enemy(x_start_enemy, y_start_enemy, ENEMY_SIZE);
 
     while (true)
     {
