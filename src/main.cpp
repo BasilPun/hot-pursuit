@@ -7,6 +7,7 @@
 #include <bn_sprite_ptr.h>
 #include <bn_sprite_text_generator.h>
 #include "bn_math.h"
+#include <bn_random.h>
 
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_dot.h"
@@ -15,6 +16,8 @@
 // Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size ENEMY_SIZE = {8, 8};
+
+bn::random random;
 
 static constexpr int MIN_Y = -bn::display::height() / 2;
 static constexpr int MAX_Y = bn::display::height() / 2;
@@ -211,8 +214,10 @@ int main()
         if (enemy.bounding_box.intersects(player.bounding_box))
         {
             scoreDisplay.resetScore();
-            player.sprite.set_x(44);
-            player.sprite.set_y(22);
+
+            // enemy spawns in random location
+            enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
+            enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
         }
 
         // Update the scores and disaply them
