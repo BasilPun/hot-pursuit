@@ -150,34 +150,40 @@ private:
 
 class Enemy
 {
-    public:
-        bn::sprite_ptr sprite;
-        bn::size size;
-        bn::rect bounding_box = create_bounding_box(sprite, size);
-        bn::fixed speed = 0.9;
+public:
+    bn::sprite_ptr sprite;
+    bn::size size;
+    bn::rect bounding_box = create_bounding_box(sprite, size);
+    bn::fixed speed = 0.9;
 
-        Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::square.create_sprite(x_start_enemy, y_start_enemy)),
-                                                                                size(size)
-        {
-        }
-        void update(Player& player)
-        {
-            bn::fixed player_x = player.sprite.x();
-            bn::fixed player_y = player.sprite.y();
+    Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::square.create_sprite(x_start_enemy, y_start_enemy)),
+                                                                             size(size)
+    {
+    }
+    void update(Player &player)
+    {
+        // 2d movement for enemy. with v_x, v_y logic.
+        bn::fixed player_x = player.sprite.x();
+        bn::fixed player_y = player.sprite.y();
 
-            bn::fixed enemy_x = sprite.x();
-            bn::fixed enemy_y = sprite.y();
+        bn::fixed enemy_x = sprite.x();
+        bn::fixed enemy_y = sprite.y();
 
-            sprite.set_x((player_x - enemy_x) - speed);
-            sprite.set_y((player_y - enemy_y) -speed);
+        int y_diff = (player_y - enemy_y).integer();
+        int x_diff = (player_x - enemy_x).integer();
 
-            //find player x & y
-            //every second we will move towards player's x and y
-            //enemy x enemy y -> player x player y
-            //(enemyx - playerx) / enemyspeed
-            //(enemyy - playery) / enemyspeed
-        }
-    private:
+        bn::fixed theta = bn::degrees_atan2(y_diff, x_diff);
+
+        bn::fixed velocity_x = speed * bn::degrees_cos(theta);
+        bn::fixed velocity_y = speed * bn::degrees_sin(theta);
+
+        sprite.set_x(enemy_x + velocity_x);
+        sprite.set_y(enemy_y + velocity_y);
+
+        bounding_box = create_bounding_box(sprite, size);
+    }
+
+private:
 };
 
 int main()
