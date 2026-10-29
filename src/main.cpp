@@ -219,50 +219,35 @@ int main()
     bn::fixed y_start = 22;
     Player player = Player(x_start, y_start);
 
-    bn::fixed x_start_enemy = -40;
-    bn::fixed y_start_enemy = 40;
-
     // Manual Enemy Creation
-    Enemy enemy = Enemy(x_start_enemy, y_start_enemy, ENEMY_SIZE);
-    Enemy enemy2 = Enemy(-40, 40, ENEMY_SIZE);
-    Enemy enemy3 = Enemy(-20, 30, ENEMY_SIZE);
+    Enemy enemy1 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
+    Enemy enemy2 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
+    Enemy enemy3 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
+
+    // array of enemies
+    static constexpr int MAX_ENEMIES = 3;
+    bn::vector<Enemy, MAX_ENEMIES> Enemies = {};
+    Enemies.push_back(enemy1);
+    Enemies.push_back(enemy2);
+    Enemies.push_back(enemy3);
 
     while (true)
     {
         player.update();
-        enemy.update(player);
-        // Reset the current score and player position if the player collides with enemy
-        if (enemy.bounding_box.intersects(player.bounding_box))
+
+        for (Enemy enemy : Enemies)
         {
-            scoreDisplay.resetScore();
+            enemy.update(player);
+            // Reset the current score and player position if the player collides with enemy
+            if (enemy.bounding_box.intersects(player.bounding_box))
+            {
+                scoreDisplay.resetScore();
 
-            // enemy spawns in random location
-            enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
-            enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
+                // enemy spawns in random location
+                enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
+                enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
+            }
         }
-
-        // Do a collision check on the other enemies
-        enemy2.update(player);
-        if (enemy2.bounding_box.intersects(player.bounding_box))
-        {
-            scoreDisplay.resetScore();
-
-            // enemy spawns in random location
-            enemy2.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
-            enemy2.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
-        }
-
-        // update and checks for enemy 3
-        enemy3.update(player);
-        if (enemy3.bounding_box.intersects(player.bounding_box))
-        {
-            scoreDisplay.resetScore();
-
-            // enemy spawns in random location
-            enemy3.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
-            enemy3.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
-        }
-
         // Update the scores and disaply them
         scoreDisplay.update();
 
