@@ -93,7 +93,7 @@ public:
         bn::string<MAX_SCORE_CHARS> number_string = bn::to_string<MAX_SCORE_CHARS>(number);
         text_generator.generate(x, y, number_string, score_sprites);
     }
-    
+
     /**
      * Sets score back to 0. Does NOT reset high score.
      */
@@ -143,22 +143,22 @@ public:
         {
             sprite.set_y(sprite.y() + speed);
         }
-        //Screen Wrapping 
-        if(sprite.x() > MAX_X)
+        // Screen Wrapping
+        if (sprite.x() >= MAX_X)
         {
-            sprite.set_x(MIN_X);
+            sprite.set_x(MAX_X - 1);
         }
-        else if(sprite.x()< MIN_X)
+        else if (sprite.x() <= MIN_X)
         {
-            sprite.set_x(MAX_X);
+            sprite.set_x(MIN_X + 1);
         }
-        if(sprite.y() > MAX_Y)
+        if (sprite.y() >= MAX_Y)
         {
-            sprite.set_y(MIN_Y);
+            sprite.set_y(MAX_Y - 1);
         }
-        else if(sprite.y() < MIN_Y)
+        else if (sprite.y() <= MIN_Y)
         {
-            sprite.set_y(MAX_Y);
+            sprite.set_y(MIN_Y - 1);
         }
 
         bounding_box = create_bounding_box(sprite, size);
@@ -222,10 +222,10 @@ int main()
     bn::fixed x_start_enemy = -40;
     bn::fixed y_start_enemy = 40;
 
-    //Manual Enemy Creation
+    // Manual Enemy Creation
     Enemy enemy = Enemy(x_start_enemy, y_start_enemy, ENEMY_SIZE);
-    Enemy enemy2 = Enemy(-40,40, ENEMY_SIZE); 
-    Enemy enemy3 = Enemy(-20,30, ENEMY_SIZE);
+    Enemy enemy2 = Enemy(-40, 40, ENEMY_SIZE);
+    Enemy enemy3 = Enemy(-20, 30, ENEMY_SIZE);
 
     while (true)
     {
@@ -241,7 +241,7 @@ int main()
             enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
         }
 
-        //Do a collision check on the other enemies
+        // Do a collision check on the other enemies
         enemy2.update(player);
         if (enemy2.bounding_box.intersects(player.bounding_box))
         {
@@ -252,7 +252,7 @@ int main()
             enemy2.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
         }
 
-        //update and checks for enemy 3
+        // update and checks for enemy 3
         enemy3.update(player);
         if (enemy3.bounding_box.intersects(player.bounding_box))
         {
