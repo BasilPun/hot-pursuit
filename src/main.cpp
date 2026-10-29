@@ -93,7 +93,7 @@ public:
         bn::string<MAX_SCORE_CHARS> number_string = bn::to_string<MAX_SCORE_CHARS>(number);
         text_generator.generate(x, y, number_string, score_sprites);
     }
-
+    
     /**
      * Sets score back to 0. Does NOT reset high score.
      */
@@ -225,7 +225,7 @@ int main()
     //Manual Enemy Creation
     Enemy enemy = Enemy(x_start_enemy, y_start_enemy, ENEMY_SIZE);
     Enemy enemy2 = Enemy(-40,40, ENEMY_SIZE); 
-    Enemy enemy3 = Enemy(-50,40, ENEMY_SIZE);
+    Enemy enemy3 = Enemy(-20,30, ENEMY_SIZE);
 
     while (true)
     {
@@ -240,6 +240,7 @@ int main()
             enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
             enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
         }
+
         //Do a collision check on the other enemies
         enemy2.update(player);
         if (enemy2.bounding_box.intersects(player.bounding_box))
@@ -250,6 +251,7 @@ int main()
             enemy2.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
             enemy2.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
         }
+
         //update and checks for enemy 3
         enemy3.update(player);
         if (enemy3.bounding_box.intersects(player.bounding_box))
