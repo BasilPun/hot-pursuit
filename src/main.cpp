@@ -219,21 +219,21 @@ int main()
     bn::fixed y_start = 22;
     Player player = Player(x_start, y_start);
 
-    // Manual Enemy Creation
-    Enemy enemy1 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
-    Enemy enemy2 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
-    Enemy enemy3 = Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE);
-
     // array of enemies
-    static constexpr int MAX_ENEMIES = 3;
+    static constexpr int MAX_ENEMIES = 5;
     bn::vector<Enemy, MAX_ENEMIES> Enemies = {};
-    Enemies.push_back(enemy1);
-    Enemies.push_back(enemy2);
-    Enemies.push_back(enemy3);
+
+    // manual enemy creation
+    // Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
 
     while (true)
     {
         player.update();
+
+        if (scoreDisplay.score % 360 == 0 && (Enemies.size() < MAX_ENEMIES))
+        {
+            Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
+        }
 
         for (Enemy enemy : Enemies)
         {
@@ -246,10 +246,13 @@ int main()
                 // enemy spawns in random location
                 enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
                 enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
-                //player spawns at the start_x location
+                // player spawns at the start_x location
                 player.sprite.set_x(x_start);
                 player.sprite.set_y(y_start);
 
+                // reset array & spawn 1 as score doesnt seem to start from 0 or at least it doesnt count.
+                Enemies = {};
+                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
             }
         }
         // Update the scores and disaply them
