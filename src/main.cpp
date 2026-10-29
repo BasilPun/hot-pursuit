@@ -246,6 +246,10 @@ int main()
                 // enemy spawns in random location
                 enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
                 enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
+                //player spawns at the start_x location
+                player.sprite.set_x(x_start);
+                player.sprite.set_y(y_start);
+
             }
         }
         // Update the scores and disaply them
