@@ -4,7 +4,7 @@
 #include <bn_rect.h>
 #include <bn_size.h>
 #include <bn_fixed.h>
-#include "Player.h"
+#include "player.h"
 
 class Enemy
 {
