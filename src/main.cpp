@@ -10,10 +10,10 @@
 #include <bn_random.h>
 
 #include "common_fixed_8x16_font.h"
-#include "bn_sprite_items_knight.h"
-#include "bn_sprite_items_ghost.h"
+#include "player.h"
+#include "enemy.h"
+#include "scoredisplay.h"
 
-// Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size ENEMY_SIZE = {8, 8};
 
@@ -23,17 +23,6 @@ static constexpr int MIN_Y = -bn::display::height() / 2;
 static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
-
-// Number of characters required to show two of the longest numer possible in an int (-2147483647)
-static constexpr int MAX_SCORE_CHARS = 22;
-
-// Score location
-static constexpr int SCORE_X = 70;
-static constexpr int SCORE_Y = -70;
-
-// High score location
-static constexpr int HIGH_SCORE_X = -70;
-static constexpr int HIGH_SCORE_Y = -70;
 
 /**
  * Creates a rectangle centered at a sprite's location with a given size.
@@ -47,164 +36,6 @@ bn::rect create_bounding_box(bn::sprite_ptr sprite, bn::size box_size)
                     box_size.width(),
                     box_size.height());
 }
-
-/**
- * Displays a score and high score.
- *
- * Score starts a 0 and is increased each time update is called, and reset to 0 when resetScore is
- * called. High score tracks the highest score ever reached.
- */
-class ScoreDisplay
-{
-public:
-    ScoreDisplay() : score(0),                                                                 // Start score at 0
-                     high_score(0),                                                            // Start high score at 0
-                     score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
-                     text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
-    {
-    }
-
-    /**
-     * Increases score by 1 and updates high score if needed. Displays score and high score.
-     */
-    void update()
-    {
-        // increase score and update high score if this is the new highest
-        score++;
-        if (score > high_score)
-        {
-            high_score = score;
-        }
-
-        // Stop displaying previous scores
-        score_sprites.clear();
-
-        // Display new scores
-        show_number(SCORE_X, SCORE_Y, score);
-        show_number(HIGH_SCORE_X, HIGH_SCORE_Y, high_score);
-    }
-
-    /**
-     * Displays a number at the given position
-     */
-    void show_number(int x, int y, int number)
-    {
-        // Convert number to a string and then display it
-        bn::string<MAX_SCORE_CHARS> number_string = bn::to_string<MAX_SCORE_CHARS>(number);
-        text_generator.generate(x, y, number_string, score_sprites);
-    }
-
-    /**
-     * Sets score back to 0. Does NOT reset high score.
-     */
-    void resetScore()
-    {
-        score = 0;
-    }
-
-    int score;                                                 // current score
-    int high_score;                                            // best core
-    bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites; // Sprites to display scores
-    bn::sprite_text_generator text_generator;                  // Text generator for scores
-};
-
-class Player
-{
-public:
-    /**
-     * Update the position and bounding box of the player based on d-pad movement.
-     */
-
-    bn::sprite_ptr sprite;
-    bn::fixed speed = 1.5;                                     // The speed of the player
-    bn::size size = PLAYER_SIZE;                               // The width and height of the sprite
-    bn::rect bounding_box = create_bounding_box(sprite, size); // The rectangle around the sprite for checking collision
-
-    Player(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::knight.create_sprite(x_start, y_start))
-    {
-    }
-
-    void update()
-    {
-        if (bn::keypad::right_held())
-        {
-            sprite.set_x(sprite.x() + speed);
-        }
-        if (bn::keypad::left_held())
-        {
-            sprite.set_x(sprite.x() - speed);
-        }
-        // TODO: Add logic for up and down
-        if (bn::keypad::up_held())
-        {
-            sprite.set_y(sprite.y() - speed);
-        }
-        if (bn::keypad::down_held())
-        {
-            sprite.set_y(sprite.y() + speed);
-        }
-        // Screen Wrapping
-        if (sprite.x() >= MAX_X)
-        {
-            sprite.set_x(MAX_X - 1);
-        }
-        else if (sprite.x() <= MIN_X)
-        {
-            sprite.set_x(MIN_X + 1);
-        }
-        if (sprite.y() >= MAX_Y)
-        {
-            sprite.set_y(MAX_Y - 1);
-        }
-        else if (sprite.y() <= MIN_Y)
-        {
-            sprite.set_y(MIN_Y - 1);
-        }
-
-        bounding_box = create_bounding_box(sprite, size);
-    }
-
-private:
-    //
-};
-
-class Enemy
-{
-public:
-    bn::sprite_ptr sprite;
-    bn::size size;
-    bn::rect bounding_box = create_bounding_box(sprite, size);
-    bn::fixed speed = 0.9;
-
-    Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::ghost.create_sprite(x_start_enemy, y_start_enemy)),
-                                                                             size(size)
-    {
-    }
-    void update(Player &player)
-    {
-        // 2d movement for enemy. with v_x, v_y logic.
-        bn::fixed player_x = player.sprite.x();
-        bn::fixed player_y = player.sprite.y();
-
-        bn::fixed enemy_x = sprite.x();
-        bn::fixed enemy_y = sprite.y();
-
-        int y_diff = (player_y - enemy_y).integer();
-        int x_diff = (player_x - enemy_x).integer();
-
-        bn::fixed theta = bn::degrees_atan2(y_diff, x_diff);
-
-        bn::fixed velocity_x = speed * bn::degrees_cos(theta);
-        bn::fixed velocity_y = speed * bn::degrees_sin(theta);
-
-        sprite.set_x(enemy_x + velocity_x);
-        sprite.set_y(enemy_y + velocity_y);
-
-        bounding_box = create_bounding_box(sprite, size);
-    }
-
-private:
-};
 
 int main()
 {
@@ -223,11 +54,10 @@ int main()
     static constexpr int MAX_ENEMIES = 5;
     bn::vector<Enemy, MAX_ENEMIES> Enemies = {};
 
-    // manual enemy creation
-    // Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
 
     while (true)
     {
+
         player.update();
 
         if (scoreDisplay.score % 360 == 0 && (Enemies.size() < MAX_ENEMIES))
@@ -249,7 +79,6 @@ int main()
                 // player spawns at the start_x location
                 player.sprite.set_x(x_start);
                 player.sprite.set_y(y_start);
-
                 // reset array & spawn 1 as score doesnt seem to start from 0 or at least it doesnt count.
                 Enemies = {};
                 Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
