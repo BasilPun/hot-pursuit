@@ -12,6 +12,7 @@
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
+#include "bn_sprite_items_ghost.h"
 
 // Width and height of the the player bounding box
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -176,7 +177,7 @@ public:
     bn::rect bounding_box = create_bounding_box(sprite, size);
     bn::fixed speed = 0.9;
 
-    Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::square.create_sprite(x_start_enemy, y_start_enemy)),
+    Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::ghost.create_sprite(x_start_enemy, y_start_enemy)),
                                                                              size(size)
     {
     }
