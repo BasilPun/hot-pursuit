@@ -54,6 +54,5 @@ void Player::update()
     {
         sprite.set_y(MIN_Y - 1);
     }
-
     bounding_box = create_bounding_box(sprite, size);
 }

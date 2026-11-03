@@ -9,6 +9,7 @@
 #include "bn_math.h"
 #include <bn_random.h>
 
+
 #include "common_fixed_8x16_font.h"
 #include "player.h"
 #include "enemy.h"
@@ -53,7 +54,6 @@ int main()
     // array of enemies
     static constexpr int MAX_ENEMIES = 5;
     bn::vector<Enemy, MAX_ENEMIES> Enemies = {};
-
 
     while (true)
     {

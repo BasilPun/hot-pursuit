@@ -6,9 +6,9 @@ static constexpr int HIGH_SCORE_X = -70;
 static constexpr int HIGH_SCORE_Y = -70;
 
 ScoreDisplay::ScoreDisplay() : score(0),                                                                 // Start score at 0
-                                 high_score(0),                                                            // Start high score at 0
-                                 score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
-                                 text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
+                                high_score(0),                                                            // Start high score at 0
+                                score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
+                                text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
 {
 }
 
