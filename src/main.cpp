@@ -10,8 +10,7 @@
 #include <bn_random.h>
 
 #include "common_fixed_8x16_font.h"
-#include "bn_sprite_items_dot.h"
-#include "bn_sprite_items_square.h"
+#include "bn_sprite_items_knight.h"
 #include "bn_sprite_items_ghost.h"
 
 // Width and height of the the player bounding box
@@ -121,7 +120,7 @@ public:
     bn::size size = PLAYER_SIZE;                               // The width and height of the sprite
     bn::rect bounding_box = create_bounding_box(sprite, size); // The rectangle around the sprite for checking collision
 
-    Player(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start))
+    Player(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::knight.create_sprite(x_start, y_start))
     {
     }
 
