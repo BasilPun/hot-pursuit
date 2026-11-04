@@ -15,6 +15,7 @@ ScoreDisplay::ScoreDisplay() : score(0),                                        
                                 score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
                                 text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
 {
+    update();
 }
 
 void ScoreDisplay::update()
@@ -53,4 +54,16 @@ void ScoreDisplay::resetScore()
 {
     score = 0;
     lives = 3;
+    hide_game_over();
+    update();
+}
+void ScoreDisplay::show_game_over()
+{
+    game_over_sprites.clear();
+    text_generator.generate(-40,-10, "GAME OVER", game_over_sprites);
+    text_generator.generate(-56,10, "PRESS START", game_over_sprites);
+}
+void ScoreDisplay::hide_game_over()
+{
+    game_over_sprites.clear();
 }

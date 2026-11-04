@@ -85,6 +85,7 @@ int main()
                 // become a bouncer
                 enemy.bounce(enemy.bouncer_x_speed, enemy.bouncer_y_speed, MIN_X, MAX_X, MIN_Y, MAX_Y);
             }
+            enemy.bounding_box = create_bounding_box(enemy.sprite, ENEMY_SIZE);
             // Reset the current score and player position if the player collides with enemy
             if (enemy.bounding_box.intersects(player.bounding_box))
             {
@@ -92,20 +93,19 @@ int main()
 
                 if(scoreDisplay.lives > 0)
                { 
+                 // player spawns at the start_x location
+                player.sprite.set_x(x_start);
+                player.sprite.set_y(y_start);
+
                 // enemy spawns in random location
                 enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
                 enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
-                // player spawns at the start_x location
-                player.sprite.set_x(x_start);
-                player.sprite.set_y(y_start);
-                // reset array & spawn 1 as score doesnt seem to start from 0 or at least it doesnt count.
-                Enemies = {};
-                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, true, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
                }
                else
                {
                     //out of lives trigger game over state
                     is_game_over = true;
+                    scoreDisplay.show_game_over();
                }
                 break; 
             }
@@ -113,7 +113,6 @@ int main()
         }
             //Game over: out of lives, fully reset score/lives (highscore presists)
             scoreDisplay.update();
-    
         }         
        else
         {
