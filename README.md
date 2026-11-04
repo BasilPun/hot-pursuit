@@ -1,2 +1,2 @@
 # hot-pursuit
-A project to explore classes in C++. See instructions [here](./instructions.md)
+A Game where Player is being chased around by ghosts and player has to survive in order to stack up a highscore.
