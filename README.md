@@ -1,2 +1,3 @@
 # hot-pursuit
-A Game where Player is being chased around by ghosts and player has to survive in order to stack up a highscore.
+A fast-paced Gameboy Advanced Game where Player has to dodge the incoming ghosts, survive with the amount of given lives. and rack up the highest score possible.
+![Hot Pursuit Gameplay Preview](graphics/HOTGIF.gif)
