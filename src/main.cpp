@@ -9,7 +9,6 @@
 #include "bn_math.h"
 #include <bn_random.h>
 
-
 #include "common_fixed_8x16_font.h"
 #include "player.h"
 #include "enemy.h"
@@ -62,12 +61,28 @@ int main()
 
         if (scoreDisplay.score % 360 == 0 && (Enemies.size() < MAX_ENEMIES))
         {
-            Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
+            if (Enemies.size() == 0)
+            {
+                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, true, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
+            }
+            else
+            {
+                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, false, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
+            }
         }
 
-        for (Enemy enemy : Enemies)
+        for (Enemy &enemy : Enemies)
         {
-            enemy.update(player);
+            if (enemy.isFirst == true)
+            {
+                enemy.update(player);
+            }
+            else
+            {
+                // if not head honcho ghost,
+                // become a bouncer
+                enemy.bounce(enemy.bouncer_x_speed, enemy.bouncer_y_speed, MIN_X, MAX_X, MIN_Y, MAX_Y);
+            }
             // Reset the current score and player position if the player collides with enemy
             if (enemy.bounding_box.intersects(player.bounding_box))
             {
@@ -81,7 +96,7 @@ int main()
                 player.sprite.set_y(y_start);
                 // reset array & spawn 1 as score doesnt seem to start from 0 or at least it doesnt count.
                 Enemies = {};
-                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE));
+                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, true, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
             }
         }
         // Update the scores and disaply them

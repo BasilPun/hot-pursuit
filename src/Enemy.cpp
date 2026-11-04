@@ -4,16 +4,18 @@
 
 bn::rect create_bounding_box(bn::sprite_ptr sprite, bn::size box_size);
 
-Enemy::Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size) : sprite(bn::sprite_items::ghost.create_sprite(x_start_enemy, y_start_enemy)),
-                                                                         size(size),
-                                                                         bounding_box(create_bounding_box(sprite, size)),
-                                                                         speed(0.9)
+Enemy::Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size, bool isFirst, bn::fixed bouncer_x_speed, bn::fixed bouncer_y_speed) : sprite(bn::sprite_items::ghost.create_sprite(x_start_enemy, y_start_enemy)),
+                                                                                                                                                    size(size),
+                                                                                                                                                    bounding_box(create_bounding_box(sprite, size)),
+                                                                                                                                                    speed(0.9),
+                                                                                                                                                    isFirst(isFirst),
+                                                                                                                                                    bouncer_x_speed(bouncer_x_speed),
+                                                                                                                                                    bouncer_y_speed(bouncer_y_speed)
 {
 }
 
 void Enemy::update(Player &player)
 {
-    // 2d movement for enemy. with v_x, v_y logic.
     bn::fixed player_x = player.sprite.x();
     bn::fixed player_y = player.sprite.y();
 
@@ -32,4 +34,46 @@ void Enemy::update(Player &player)
     sprite.set_y(enemy_y + velocity_y);
 
     bounding_box = create_bounding_box(sprite, size);
+}
+
+void Enemy::bounce(bn::fixed &x_speed, bn::fixed &y_speed, bn::fixed MIN_X, bn::fixed MAX_X, bn::fixed MIN_Y, bn::fixed MAX_Y)
+{
+    bn::fixed x = sprite.x();
+    bn::fixed y = sprite.y();
+
+    // Update x position by adding speed
+    x += x_speed;
+    y += y_speed;
+
+    // If we've gone off the screen on the right
+    if (x > MAX_X)
+    {
+        // Snap back to screen and reverse direction
+        x = MAX_X;
+        x_speed *= -1;
+    }
+    // If we've gone off the screen on the left
+    if (x < MIN_X)
+    {
+        // Snap back to screen and reverse direction
+        x = MIN_X;
+        x_speed *= -1;
+    }
+
+    if (y > MAX_Y)
+    {
+        // Snap back to screen and reverse direction
+        y = MAX_Y;
+        y_speed *= -1;
+    }
+    // If we've gone off the screen on the left
+    if (y < MIN_Y)
+    {
+        // Snap back to screen and reverse direction
+        y = MIN_Y;
+        y_speed *= -1;
+    }
+
+    sprite.set_x(x);
+    sprite.set_y(y);
 }
