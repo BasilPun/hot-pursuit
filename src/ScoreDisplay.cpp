@@ -7,13 +7,13 @@ static constexpr int LIVES_Y = -72;
 static constexpr int SCORE_X = 50;
 static constexpr int SCORE_Y = -72;
 
-ScoreDisplay::ScoreDisplay() : score(0),                                                                 // Start score at 0
-                                high_score(0),
-                                lives(3),
-                                high_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),
-                                lives_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),                                                              // Start high score at 0
-                                score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
-                                text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
+ScoreDisplay::ScoreDisplay() : score(-1), // Start score at -1 for starting glitch
+                               high_score(0),
+                               lives(3),
+                               high_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),
+                               lives_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start high score at 0
+                               score_sprites(bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS>()),             // Start with empty vector for score sprites
+                               text_generator(bn::sprite_text_generator(common::fixed_8x16_sprite_font)) // Use a new text generator
 {
     update();
 }
@@ -31,23 +31,21 @@ void ScoreDisplay::update()
     high_sprites.clear();
     score_sprites.clear();
     lives_sprites.clear();
-    
 
-    //DISPLAY HIGH SCORE
+    // DISPLAY HIGH SCORE
     bn::string<MAX_SCORE_CHARS> high_str = "High:";
     high_str.append(bn::to_string<16>(high_score));
-    text_generator.generate(HIGH_SCORE_X,HIGH_SCORE_Y, high_str, score_sprites);
+    text_generator.generate(HIGH_SCORE_X, HIGH_SCORE_Y, high_str, score_sprites);
 
-    //DISPLAY LIVES
+    // DISPLAY LIVES
     bn::string<MAX_SCORE_CHARS> lives_str = "Lives:";
     lives_str.append(bn::to_string<16>(lives));
-    text_generator.generate(LIVES_X,LIVES_Y, lives_str, score_sprites);
+    text_generator.generate(LIVES_X, LIVES_Y, lives_str, score_sprites);
 
-    //DISPLAY SCORE
+    // DISPLAY SCORE
     bn::string<MAX_SCORE_CHARS> score_str = "Score:";
     score_str.append(bn::to_string<16>(score));
-    text_generator.generate(SCORE_X,SCORE_Y, score_str, score_sprites);
-
+    text_generator.generate(SCORE_X, SCORE_Y, score_str, score_sprites);
 }
 
 void ScoreDisplay::resetScore()
@@ -60,8 +58,8 @@ void ScoreDisplay::resetScore()
 void ScoreDisplay::show_game_over()
 {
     game_over_sprites.clear();
-    text_generator.generate(-40,-10, "GAME OVER", game_over_sprites);
-    text_generator.generate(-56,10, "PRESS START", game_over_sprites);
+    text_generator.generate(-40, -10, "GAME OVER", game_over_sprites);
+    text_generator.generate(-56, 10, "PRESS START", game_over_sprites);
 }
 void ScoreDisplay::hide_game_over()
 {

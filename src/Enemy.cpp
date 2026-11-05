@@ -1,8 +1,7 @@
 #include "enemy.h"
 #include "bn_math.h"
 #include "bn_sprite_items_ghost.h"
-
-bn::rect create_bounding_box(bn::sprite_ptr sprite, bn::size box_size);
+#include "bounding_box.h"
 
 Enemy::Enemy(bn::fixed x_start_enemy, bn::fixed y_start_enemy, bn::size size, bool isFirst, bn::fixed bouncer_x_speed, bn::fixed bouncer_y_speed) : sprite(bn::sprite_items::ghost.create_sprite(x_start_enemy, y_start_enemy)),
                                                                                                                                                     size(size),

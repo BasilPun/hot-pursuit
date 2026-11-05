@@ -2,6 +2,7 @@
 #include <bn_keypad.h>
 #include <bn_display.h>
 #include "bn_sprite_items_knight.h"
+#include "bounding_box.h"
 
 static constexpr int MIN_Y = -bn::display::height() / 2;
 static constexpr int MAX_Y = bn::display::height() / 2;
@@ -9,12 +10,10 @@ static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 
-bn::rect create_bounding_box(bn::sprite_ptr sprite, bn::size box_size);
-
 Player::Player(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::knight.create_sprite(x_start, y_start)),
-                                                         speed(1.5),
-                                                         size(PLAYER_SIZE),
-                                                         bounding_box(create_bounding_box(sprite, size))
+                                                       speed(1.5),
+                                                       size(PLAYER_SIZE),
+                                                       bounding_box(create_bounding_box(sprite, size))
 {
 }
 

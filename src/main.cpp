@@ -13,6 +13,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "scoredisplay.h"
+#include "bounding_box.h"
 
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size ENEMY_SIZE = {8, 8};
@@ -23,19 +24,6 @@ static constexpr int MIN_Y = -bn::display::height() / 2;
 static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
-
-/**
- * Creates a rectangle centered at a sprite's location with a given size.
- * sprite the sprite to center the box around
- * box_size the dimensions of the bounding box
- */
-bn::rect create_bounding_box(bn::sprite_ptr sprite, bn::size box_size)
-{
-    return bn::rect(sprite.x().round_integer(),
-                    sprite.y().round_integer(),
-                    box_size.width(),
-                    box_size.height());
-}
 
 int main()
 {
@@ -57,70 +45,70 @@ int main()
 
     while (true)
     {
-        if(!is_game_over){
-
-        player.update();
-
-        if (scoreDisplay.score % 360 == 0 && (Enemies.size() < MAX_ENEMIES))
+        if (!is_game_over)
         {
-            if (Enemies.size() == 0)
-            {
-                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, true, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
-            }
-            else
-            {
-                Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, false, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
-            }
-        }
 
-        for (Enemy &enemy : Enemies)
-        {
-            if (enemy.isFirst == true)
-            {
-                enemy.update(player);
-            }
-            else
-            {
-                // if not head honcho ghost,
-                // become a bouncer
-                enemy.bounce(enemy.bouncer_x_speed, enemy.bouncer_y_speed, MIN_X, MAX_X, MIN_Y, MAX_Y);
-            }
-            enemy.bounding_box = create_bounding_box(enemy.sprite, ENEMY_SIZE);
-            // Reset the current score and player position if the player collides with enemy
-            if (enemy.bounding_box.intersects(player.bounding_box))
-            {
-                scoreDisplay.lives--;
+            player.update();
 
-                if(scoreDisplay.lives > 0)
-               { 
-                 // player spawns at the start_x location
-                player.sprite.set_x(x_start);
-                player.sprite.set_y(y_start);
-
-                // enemy spawns in random location
-                enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
-                enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
-               }
-               else
-               {
-                    //out of lives trigger game over state
-                    is_game_over = true;
-                    scoreDisplay.show_game_over();
-               }
-                break; 
+            if (scoreDisplay.score % 360 == 0 && (Enemies.size() < MAX_ENEMIES))
+            {
+                if (Enemies.size() == 0)
+                {
+                    Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, true, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
+                }
+                else
+                {
+                    Enemies.push_back(Enemy(random.get_unbiased_fixed(MIN_X, MAX_X), random.get_unbiased_fixed(MIN_Y, MAX_Y), ENEMY_SIZE, false, random.get_unbiased_fixed(-0.8, 0.8), random.get_unbiased_fixed(-0.8, 0.8)));
+                }
             }
 
-        }
-            //Game over: out of lives, fully reset score/lives (highscore presists)
+            for (Enemy &enemy : Enemies)
+            {
+                if (enemy.isFirst == true)
+                {
+                    enemy.update(player);
+                }
+                else
+                {
+                    // if not head honcho ghost,
+                    // become a bouncer
+                    enemy.bounce(enemy.bouncer_x_speed, enemy.bouncer_y_speed, MIN_X, MAX_X, MIN_Y, MAX_Y);
+                }
+                enemy.bounding_box = create_bounding_box(enemy.sprite, ENEMY_SIZE);
+                // Reset the current score and player position if the player collides with enemy
+                if (enemy.bounding_box.intersects(player.bounding_box))
+                {
+                    scoreDisplay.lives--;
+
+                    if (scoreDisplay.lives > 0)
+                    {
+                        // player spawns at the start_x location
+                        player.sprite.set_x(x_start);
+                        player.sprite.set_y(y_start);
+
+                        // enemy spawns in random location
+                        enemy.sprite.set_x(random.get_unbiased_fixed(MIN_X, MAX_X));
+                        enemy.sprite.set_y(random.get_unbiased_fixed(MIN_Y, MAX_Y));
+                    }
+                    else
+                    {
+                        // out of lives trigger game over state
+                        is_game_over = true;
+                        scoreDisplay.show_game_over();
+                    }
+                    break;
+                }
+            }
+            // Game over: out of lives, fully reset score/lives (highscore presists)
             scoreDisplay.update();
-        }         
-       else
+        }
+        else
         {
             // Game Over State: Wait for player to press START to restart
             if (bn::keypad::start_pressed())
             {
                 scoreDisplay.resetScore(); // Resets score to 0 and lives back to 3
-                
+
                 player.sprite.set_x(x_start);
                 player.sprite.set_y(y_start);
 
